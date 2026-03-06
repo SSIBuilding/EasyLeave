@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ลงทะเบียน</title>
+<link href="https://fonts.googleapis.com/css2?family=Prompt:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+<style>
+    /* ===== Theme Variables (จากหน้าอื่นๆ) ===== */
+    :root {
+        --primary-color-start: #1994b6;
+        --primary-color-end: #36a761;
+        --text-color-dark: #333;
+        --text-color-light: #666;
+        --background-color: #f0f2f5;
+        --card-background: #ffffff;
+        --shadow-light: 0 4px 15px rgba(0,0,0,0.08);
+        --border-color: #e0e0e0;
+        --focus-ring-color: rgba(74, 144, 226, 0.2);
+    }
+
+    body.theme-dark {
+        --primary-color-start: #141E30;
+        --primary-color-end: #243B55;
+        --text-color-dark: #fff;
+        --text-color-light: #bbb;
+        --background-color: #181818;
+        --card-background: #242424;
+        --border-color: #444;
+        --shadow-light: 0 4px 15px rgba(255,255,255,0.08);
+        --focus-ring-color: rgba(36, 59, 85, 0.2);
+    }
+    
+    body.theme-orange-purple { --primary-color-start: #ff7e5f; --primary-color-end: #6a11cb; }
+    body.theme-blue-violet { --primary-color-start: #36d1dc; --primary-color-end: #5b86e5; }
+    body.theme-pink-purple { --primary-color-start: #ff758c; --primary-color-end: #8e44ad; }
+    body.theme-green-gold { --primary-color-start: #11998e; --primary-color-end: #fbc531; }
+    body.theme-red-orange { --primary-color-start: #f12711; --primary-color-end: #f5af19; }
+    body.theme-teal-navy { --primary-color-start: #2b5876; --primary-color-end: #4e4376; }
+    body.theme-monochrome { --primary-color-start: #555; --primary-color-end: #999; }
+    
+    /* ===== Base Styles ===== */
+    body {
+        font-family: 'Prompt', sans-serif;
+        background: var(--background-color);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        min-height: 100vh;
+        margin: 0;
+        transition: background-color 0.3s ease, color 0.3s ease;
+    }
+
+    .card {
+        background: var(--card-background);
+        padding: 30px 25px;
+        border-radius: 20px;
+        box-shadow: var(--shadow-light);
+        width: 350px;
+        text-align: center;
+        box-sizing: border-box;
+        transition: background-color 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    h2 {
+        font-size: 24px;
+        font-weight: 700;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 10px;
+        margin-bottom: 25px;
+        background: linear-gradient(90deg, var(--primary-color-start), var(--primary-color-end));
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+    }
+    h2 i {
+        -webkit-text-fill-color: var(--primary-color-end);
+    }
+    body.theme-dark h2 {
+        -webkit-text-fill-color: var(--text-color-dark);
+        background: none;
+    }
+    body.theme-dark h2 i {
+        color: var(--primary-color-end);
+    }
+
+    input {
+        width: 100%;
+        padding: 12px;
+        margin: 8px 0;
+        border: 1px solid var(--border-color);
+        border-radius: 10px;
+        font-size: 14px;
+        box-sizing: border-box;
+        background: var(--background-color);
+        color: var(--text-color-dark);
+        transition: all 0.3s ease;
+    }
+
+    input:focus {
+        border-color: var(--primary-color-end);
+        box-shadow: 0 0 0 3px var(--focus-ring-color);
+        outline: none;
+    }
+
+    button {
+        width: 100%;
+        padding: 12px;
+        margin-top: 10px;
+        border: none;
+        border-radius: 10px;
+        font-weight: 600;
+        cursor: pointer;
+        box-sizing: border-box;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 8px;
+        font-size: 16px;
+        transition: all 0.3s ease;
+    }
+
+    #submitBtn {
+        background: linear-gradient(45deg, var(--primary-color-start), var(--primary-color-end));
+        color: #fff;
+        box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    }
+    body.theme-dark #submitBtn {
+        background: linear-gradient(45deg, var(--primary-color-end), var(--primary-color-start));
+    }
+    #submitBtn:hover:not(:disabled) {
+        transform: translateY(-3px);
+        box-shadow: 0 6px 15px rgba(0,0,0,0.15);
+    }
+
+    #submitBtn:disabled {
+        cursor: not-allowed;
+        opacity: 0.6;
+    }
+
+    .back-btn {
+        background: var(--border-color);
+        color: var(--text-color-light);
+        box-shadow: none;
+    }
+    body.theme-dark .back-btn {
+        background: var(--border-color);
+        color: var(--text-color-dark);
+    }
+    .back-btn:hover {
+        background: #d5d5d5;
+        color: #333;
+        transform: translateY(-3px);
+        box-shadow: 0 6px 15px rgba(0,0,0,0.15);
+    }
+    body.theme-dark .back-btn:hover {
+        background: #555;
+        color: #fff;
+    }
+
+    .msg {
+        margin-top: 15px;
+        min-height: 20px;
+        font-weight: 500;
+        font-size: 14px;
+        color: var(--text-color-dark);
+        transition: color 0.3s ease;
+    }
+
+    #lineUserId { display: none; }
+</style>
+</head>
+<body>
+
+<div class="card">
+    <h2>
+        <i class="fas fa-user-plus"></i>
+        ลงทะเบียน
+    </h2>
+
+    <input type="text" id="empId" placeholder="เช่น P0123456" required>
+    <input type="text" id="lineUserId">
+    <button id="submitBtn"><i class="fas fa-paper-plane"></i> ลงทะเบียน</button>
+    <button class="back-btn" onclick="window.location.href='Login.html'"><i class="fas fa-arrow-left"></i> ย้อนกลับ</button>
+    <div id="message" class="msg"></div>
+</div>
+
+<script>
+// โหลดธีมจาก localStorage ทันทีที่ DOM โหลดเสร็จ
+const savedTheme = localStorage.getItem('selectedTheme');
+if (savedTheme) {
+    document.body.className = savedTheme;
+}
+
+// --- ดึง LineUserID จาก sessionStorage ---
+const storedLineUserId = sessionStorage.getItem('lineUserId');
+if (!storedLineUserId) {
+    alert("❌ ไม่พบ LineUserID");
+    window.location.href = "Login.html"; // กลับไปหน้า Login
+} else {
+    document.getElementById("lineUserId").value = storedLineUserId; // ใส่ใน input หรือซ่อนก็ได้
+}
+
+// --- ปุ่ม Register ---
+document.getElementById("submitBtn").addEventListener("click", async () => {
+    const submitBtn = document.getElementById("submitBtn");
+    const empId = document.getElementById("empId").value.trim();
+    const lineUserId = document.getElementById("lineUserId").value.trim();
+    const messageDiv = document.getElementById("message");
+
+    // ป้องกันการกดซ้ำ
+    if (submitBtn.disabled) {
+        return;
+    }
+
+    if (!empId || !lineUserId) {
+        messageDiv.style.color = "red";
+        messageDiv.textContent = "❌ กรุณากรอก EmployeeID และ LineUserID";
+        return;
+    }
+
+    // เริ่มต้นการส่งข้อมูล: ปิดการใช้งานปุ่ม
+    submitBtn.disabled = true;
+    messageDiv.style.color = "var(--text-color-dark)";
+    messageDiv.textContent = "⏳ กำลังส่งข้อมูล...";
+
+    try {
+        const formData = new URLSearchParams();
+        formData.append("employeeId", empId);
+        formData.append("lineUserId", lineUserId);
+
+        const response = await fetch("https://script.google.com/macros/s/AKfycbwMq4Q9FzB3lMWbRe5nf9sALQzd7Of_Aig6y1UeRNqkGG0fiHH4ZKHotuS__ilr5dEl_A/exec", {
+            method: "POST",
+            body: formData
+        });
+
+        const result = await response.json();
+
+        if (result.result === "success") {
+            messageDiv.style.color = "var(--primary-color-end)";
+            messageDiv.textContent = "✅ ลงทะเบียนสำเร็จ!";
+            setTimeout(() => window.location.href = "Login.html", 1000);
+        } else {
+            messageDiv.style.color = "red";
+            messageDiv.textContent = "❌ " + result.message;
+            submitBtn.disabled = false; // เปิดการใช้งานปุ่มอีกครั้งเมื่อเกิดข้อผิดพลาด
+        }
+
+    } catch (err) {
+        console.error("Fetch Error:", err);
+        messageDiv.style.color = "red";
+        messageDiv.textContent = "❌ เกิดข้อผิดพลาด";
+        submitBtn.disabled = false; // เปิดการใช้งานปุ่มอีกครั้งเมื่อเกิดข้อผิดพลาด
+    }
+});
+</script>
+
+</body>
+</html>
