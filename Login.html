@@ -720,7 +720,7 @@ userBtn.addEventListener('click', async () => {
         const profile = await liff.getProfile();
         const lineUserId = profile.userId;
 
-        const response = await fetch(`https://script.google.com/macros/s/AKfycbwSxcMHSXrDnhvE8XeL4PElr_3P2fCj27_hkXRgBqh8npe0emiLUuubiUWBPezeLrp6_g/exec`, {
+        const response = await fetch(`https://script.google.com/macros/s/AKfycbw0lcAFKZgTkkuSSc9LN2aRdKF6kEHlTBmGYA5vYkdWEyZwCebaJfq14uklICT22m3ssA/exec`, {
             method: "POST",
             headers: { "Content-Type": "application/x-www-form-urlencoded" },
             body: `lineUserId=${encodeURIComponent(lineUserId)}`
