@@ -1,0 +1,804 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BUS EasyLeave Login</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Prompt:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+<script src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
+
+<style>
+/* ===== Default Light Theme Colors ===== */
+:root {
+  --primary-color-start: #4A90E2;
+  --primary-color-end: #50E3C2;
+  --line-color: #06C755;
+  --admin-color: #FF7B00;
+  --text-color-dark: #2C3E50;
+  --text-color-light: #7F8C8D;
+  --background-color: #eef2f8;
+  --card-background: #FFFFFF;
+  --shadow-color: rgba(0, 0, 0, 0.15);
+  --border-color: #ddd;
+}
+
+/* ===== Dark Theme Colors Override ===== */
+body.theme-dark {
+  --primary-color-start: #141E30;
+  --primary-color-end: #243B55;
+  --text-color-dark: #fff;
+  --text-color-light: #bbb;
+  --background-color: #181818;
+  --card-background: #242424;
+  --shadow-color: rgba(255, 255, 255, 0.1);
+  --border-color: #444;
+}
+
+/* ===== Custom Theme Colors Override ===== */
+body.theme-custom {
+  --primary-color-start: var(--custom-primary-start);
+  --primary-color-end: var(--custom-primary-end);
+}
+
+/* ===== Other Theme Variants ===== */
+body.theme-orange-purple {
+  --primary-color-start: #ff7e5f;
+  --primary-color-end: #6a11cb;
+}
+body.theme-blue-violet {
+  --primary-color-start: #36d1dc;
+  --primary-color-end: #5b86e5;
+}
+body.theme-pink-purple {
+  --primary-color-start: #ff758c;
+  --primary-color-end: #8e44ad;
+}
+body.theme-green-gold {
+  --primary-color-start: #11998e;
+  --primary-color-end: #fbc531;
+}
+body.theme-red-orange {
+  --primary-color-start: #f12711;
+  --primary-color-end: #f5af19;
+}
+body.theme-teal-navy {
+  --primary-color-start: #2b5876;
+  --primary-color-end: #4e4376;
+}
+body.theme-monochrome {
+  --primary-color-start: #555;
+  --primary-color-end: #999;
+}
+  
+body {
+  font-family: 'Prompt', sans-serif;
+  background: var(--background-color);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  margin: 0;
+  color: var(--text-color-dark);
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+.login-container {
+  background: var(--card-background);
+  padding: 30px;
+  border-radius: 20px;
+  box-shadow: 0 10px 30px var(--shadow-color);
+  width: 100%;
+  max-width: 380px;
+  box-sizing: border-box;
+  animation: fadeIn 0.8s ease-out;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+h1 {
+  text-align: center;
+  margin-bottom: 30px;
+  font-weight: 700;
+  font-size: 24px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+  background: linear-gradient(90deg, var(--primary-color-start), var(--primary-color-end));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+h1 i {
+  color: var(--primary-color-start);
+}
+
+body.theme-dark h1 {
+  background: linear-gradient(90deg, var(--primary-color-start), var(--primary-color-end));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: var(--text-color-dark);
+}
+
+body.theme-dark h1 i {
+  color: var(--text-color-dark);
+}
+
+.tabs {
+  display: flex;
+  margin-bottom: 25px;
+  border-bottom: 2px solid var(--border-color);
+  position: relative;
+}
+
+.tab {
+  flex: 1;
+  text-align: center;
+  padding: 12px 0;
+  cursor: pointer;
+  font-weight: 500;
+  color: var(--text-color-light);
+  transition: all 0.3s ease;
+}
+
+.tab.active {
+  color: var(--primary-color-start);
+  font-weight: 600;
+}
+
+body.theme-dark .tab {
+  color: var(--text-color-light);
+}
+body.theme-dark .tab.active {
+  color: var(--text-color-dark);
+}
+
+.tab-indicator {
+  position: absolute;
+  height: 3px;
+  background-color: var(--primary-color-start);
+  bottom: -2px;
+  left: 0;
+  width: 50%;
+  transition: transform 0.3s ease;
+}
+.tab[data-tab="admin"].active ~ .tab-indicator {
+  transform: translateX(100%);
+}
+
+.tab-content {
+  display: none;
+  padding: 10px 0;
+  animation: fadeContent 0.5s ease-in-out;
+}
+  
+@keyframes fadeContent {
+  from { opacity: 0; transform: scale(0.98); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+.tab-content.active {
+  display: block;
+}
+
+input {
+  width: 100%;
+  padding: 12px;
+  margin: 10px 0;
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  font-size: 15px;
+  box-sizing: border-box;
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+  color: var(--text-color-dark);
+  background: var(--card-background);
+}
+
+input:focus {
+  border-color: var(--primary-color-start);
+  box-shadow: 0 0 0 4px rgba(74, 144, 226, 0.1);
+  outline: none;
+}
+  
+body.theme-dark input:focus {
+  box-shadow: 0 0 0 4px rgba(36, 59, 85, 0.2);
+}
+
+.login-button, .line-button {
+  width: 100%;
+  padding: 15px;
+  margin-top: 15px;
+  border: none;
+  border-radius: 10px;
+  font-weight: 600;
+  cursor: pointer;
+  box-sizing: border-box;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  font-size: 16px;
+}
+
+.login-button {
+  background: var(--primary-color-start);
+  color: #fff;
+  box-shadow: 0 4px 10px rgba(74, 144, 226, 0.2);
+}
+
+body.theme-dark .login-button {
+  box-shadow: 0 4px 10px rgba(36, 59, 85, 0.2);
+}
+
+.login-button:hover:not(:disabled) {
+  transform: translateY(-3px);
+  box-shadow: 0 6px 15px rgba(74, 144, 226, 0.25);
+}
+  
+body.theme-dark .login-button:hover:not(:disabled) {
+  box-shadow: 0 6px 15px rgba(36, 59, 85, 0.25);
+}
+
+.login-button:disabled {
+  background: #ccc;
+  cursor: not-allowed;
+}
+
+.line-button {
+  background: var(--line-color);
+  color: #fff;
+  box-shadow: 0 4px 10px rgba(6, 199, 85, 0.2);
+}
+
+.line-button:hover:not(:disabled) {
+  transform: translateY(-3px);
+  box-shadow: 0 6px 15px rgba(6, 199, 85, 0.25);
+}
+
+.line-button:disabled {
+  background: #ccc;
+  cursor: not-allowed;
+}
+
+.credits {
+  text-align: center;
+  font-size: 12px;
+  color: var(--text-color-light);
+  margin-top: 25px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 5px;
+  font-weight: 400;
+  transition: color 0.3s ease;
+}
+  
+.credits svg path {
+  fill: var(--text-color-light);
+}
+
+/* ===== Theme Switcher Styles ===== */
+.theme-switcher {
+  position: fixed;
+  top: 15px;
+  right: 15px;
+  z-index: 100;
+}
+
+.theme-switcher-btn {
+  background: var(--card-background);
+  border: 1px solid var(--border-color);
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  box-shadow: 0 4px 10px var(--shadow-color);
+  transition: all 0.3s ease;
+  color: var(--text-color-light);
+}
+
+.theme-switcher-btn:hover {
+  transform: rotate(45deg);
+  box-shadow: 0 6px 15px var(--shadow-color);
+}
+
+.theme-dropdown {
+  position: absolute;
+  top: 50px;
+  right: 0;
+  background: var(--card-background);
+  border-radius: 10px;
+  box-shadow: 0 8px 20px var(--shadow-color);
+  padding: 10px;
+  display: none;
+  flex-direction: column;
+  gap: 8px;
+  min-width: 150px;
+  animation: slideIn 0.3s ease-out forwards;
+}
+.theme-dropdown.open {
+  display: flex;
+}
+
+@keyframes slideIn {
+  from { opacity: 0; transform: translateY(-10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.theme-item {
+  padding: 10px 15px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--text-color-dark);
+  transition: background-color 0.2s ease;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.theme-item:hover {
+  background-color: var(--background-color);
+}
+
+.theme-preview {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: linear-gradient(45deg, var(--color-start), var(--color-end));
+  flex-shrink: 0;
+}
+
+/* ===== Custom Theme Modal Styles ===== */
+.modal {
+  display: none;
+  position: fixed;
+  z-index: 200;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  overflow: auto;
+  background-color: rgba(0,0,0,0.4);
+  backdrop-filter: blur(5px);
+  justify-content: center;
+  align-items: center;
+  animation: modalFadeIn 0.3s ease-in-out;
+}
+
+.modal.open {
+  display: flex;
+}
+
+@keyframes modalFadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.modal-content {
+  background-color: var(--card-background);
+  padding: 25px;
+  border-radius: 15px;
+  width: 90%;
+  max-width: 350px;
+  box-shadow: 0 10px 30px var(--shadow-color);
+  animation: modalSlideUp 0.3s ease-out;
+}
+
+@keyframes modalSlideUp {
+  from { transform: translateY(20px); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}
+
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.modal-header h3 {
+  margin: 0;
+  font-weight: 600;
+  color: var(--text-color-dark);
+}
+
+.modal-body .color-input {
+  display: flex;
+  align-items: center;
+  margin-bottom: 15px;
+  gap: 10px;
+}
+.modal-body label {
+  flex: 1;
+  font-size: 14px;
+  color: var(--text-color-light);
+}
+
+.modal-body input[type="color"] {
+  width: 50px;
+  height: 50px;
+  padding: 0;
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.modal-footer {
+  text-align: right;
+  margin-top: 20px;
+}
+
+.modal-btn {
+  padding: 10px 20px;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: background-color 0.2s ease;
+}
+.modal-btn.cancel {
+  background-color: #e0e0e0;
+  color: #555;
+  margin-right: 10px;
+}
+.modal-btn.cancel:hover {
+  background-color: #d0d0d0;
+}
+.modal-btn.apply {
+  background: var(--primary-color-start);
+  color: #fff;
+}
+.modal-btn.apply:hover {
+  filter: brightness(1.1);
+}
+
+.manual-button {
+    position: fixed;
+    top: 65px; /* ปรับตำแหน่งให้อยู่ใต้ปุ่มเฟือง */
+    right: 15px;
+    z-index: 100;
+    background: var(--card-background);
+    border: 1px solid var(--border-color);
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    box-shadow: 0 4px 10px var(--shadow-color);
+    transition: all 0.3s ease;
+    color: var(--text-color-light);
+    text-decoration: none; /* ลบเส้นใต้ลิงก์ */
+}
+
+.manual-button:hover {
+    transform: scale(1.1); /* ทำให้ปุ่มใหญ่ขึ้นเมื่อชี้เมาส์ */
+    box-shadow: 0 6px 15px var(--shadow-color);
+}
+
+</style>
+</head>
+<body>
+
+<div class="theme-switcher">
+    <button class="theme-switcher-btn" id="themeSwitcherBtn">
+        <i class="fas fa-cog"></i>
+    </button>
+    <div class="theme-dropdown" id="themeDropdown">
+        <div class="theme-item" data-theme="theme-default">
+            <span class="theme-preview" style="--color-start: #4A90E2; --color-end: #50E3C2;"></span>Default
+        </div>
+        <div class="theme-item" data-theme="theme-orange-purple">
+            <span class="theme-preview" style="--color-start: #ff7e5f; --color-end: #6a11cb;"></span>Orange & Purple
+        </div>
+        <div class="theme-item" data-theme="theme-blue-violet">
+            <span class="theme-preview" style="--color-start: #36d1dc; --color-end: #5b86e5;"></span>Blue & Violet
+        </div>
+        <div class="theme-item" data-theme="theme-pink-purple">
+            <span class="theme-preview" style="--color-start: #ff758c; --color-end: #8e44ad;"></span>Pink & Purple
+        </div>
+        <div class="theme-item" data-theme="theme-green-gold">
+            <span class="theme-preview" style="--color-start: #11998e; --color-end: #fbc531;"></span>Green & Gold
+        </div>
+        <div class="theme-item" data-theme="theme-red-orange">
+            <span class="theme-preview" style="--color-start: #f12711; --color-end: #f5af19;"></span>Red & Orange
+        </div>
+        <div class="theme-item" data-theme="theme-teal-navy">
+            <span class="theme-preview" style="--color-start: #2b5876; --color-end: #4e4376;"></span>Teal & Navy
+        </div>
+        <div class="theme-item" data-theme="theme-monochrome">
+            <span class="theme-preview" style="--color-start: #555; --color-end: #999;"></span>Monochrome
+        </div>
+        <div class="theme-item" data-theme="theme-dark">
+            <span class="theme-preview" style="--color-start: #141E30; --color-end: #243B55;"></span>Dark Mode
+        </div>
+        <hr style="border: 0; height: 1px; background-color: var(--border-color); margin: 5px 0;">
+        <div class="theme-item" id="customThemeBtn">
+            <span class="theme-preview" style="--color-start: #000; --color-end: #000; border: 1px dashed var(--border-color);"></span>Custom Theme
+        </div>
+    </div>
+</div>
+
+<a href="manual.html" class="manual-button" title="คู่มือการใช้งาน">
+    <i class="fas fa-book"></i>
+</a>
+
+<div id="customThemeModal" class="modal">
+    <div class="modal-content">
+        <div class="modal-header">
+            <h3>Custom Theme</h3>
+        </div>
+        <div class="modal-body">
+            <div class="color-input">
+                <label for="colorStart">Primary Color (Start):</label>
+                <input type="color" id="colorStart" value="#4A90E2">
+            </div>
+            <div class="color-input">
+                <label for="colorEnd">Primary Color (End):</label>
+                <input type="color" id="colorEnd" value="#50E3C2">
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button class="modal-btn cancel" id="cancelCustom">Cancel</button>
+            <button class="modal-btn apply" id="applyCustom">Apply</button>
+        </div>
+    </div>
+</div>
+
+<div class="login-container">
+    <h1>
+        <i class="fas fa-calendar-alt"></i> BUS EasyLeave
+    </h1>
+
+    <div class="tabs">
+        <div class="tab active" data-tab="user">User</div>
+        <div class="tab" data-tab="admin">Admin</div>
+        <div class="tab-indicator"></div>
+    </div>
+
+    <div class="tab-content active" id="user">
+        <button class="line-button" id="lineLoginUser"><i class="fab fa-line"></i> Login with LINE</button>
+    </div>
+
+    <div class="tab-content" id="admin">
+        <input type="text" id="adminUsername" placeholder="Username">
+        <input type="password" id="adminPassword" placeholder="Password">
+        <button class="login-button" id="adminLoginBtn"><i class="fas fa-sign-in-alt"></i> Login</button>
+        <button class="line-button" id="lineLoginAdmin"><i class="fab fa-line"></i> Login with LINE</button>
+    </div>
+
+    <div class="credits">
+        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="#888" class="bi bi-openai" viewBox="0 0 16 16">
+            <path d="M14.949 6.547a3.94 3.94 0 0 0-.348-3.273 4.11 4.11 0 0 0-4.4-1.934A4.1 4.1 0 0 0 8.423.2 4.15 4.15 0 0 0 6.305.086a4.1 4.1 0 0 0-1.891.948 4.04 4.04 0 0 0-1.158 1.753 4.1 4.1 0 0 0-1.563.679A4 4 0 0 0 .554 4.72a3.99 3.99 0 0 0 .502 4.731 3.94 3.94 0 0 0 .346 3.274 4.11 4.11 0 0 0 4.402 1.933c.382.425.852.764 1.377.995.526.231 1.095.35 1.67.346 1.78.002 3.358-1.132 3.901-2.804a4.1 4.1 0 0 0 1.563-.68 4 4 0 0 0 1.14-1.253 3.99 3.99 0 0 0-.506-4.716m-6.097 8.406a3.05 3.05 0 0 1-1.945-.694l.096-.054 3.23-1.838a.53.53 0 0 0 .265-.455v-4.49l1.366.778q.02.011.025.035v3.722c-.003 1.653-1.361 2.992-3.037 2.996m-6.53-2.75a2.95 2.95 0 0 1-.36-2.01l.095.057L5.29 12.09a.53.53 0 0 0 .527 0l3.949-2.246v1.555a.05.05 0 0 1-.022.041L6.473 13.3c-1.454.826-3.311.335-4.15-1.098m-.85-6.94A3.02 3.02 0 0 1 3.07 3.949v3.785a.51.51 0 0 0 .262.451l3.93 2.237-1.366.779a.05.05 0 0 1-.048 0L2.585 9.342a2.98 2.98 0 0 1-1.113-4.094zm11.216 2.571L8.747 5.576l1.362-.776a.05.05 0 0 1 .048 0l3.265 1.86a3 3 0 0 1 1.173 1.207 2.96 2.96 0 0 1-.27 3.2 3.05 3.05 0 0 1-1.36.997V8.279a.52.52 0 0 0-.276-.445m1.36-2.015-.097-.057-3.226-1.855a.53.53 0 0 0-.53 0L6.249 6.153V4.598a.04.04 0 0 1 .019-.04L9.533 2.7a3.07 3.07 0 0 1 3.257.139c.474.325.843.778 1.066 1.303.223.526.289 1.103.191 1.664zM5.503 8.575 4.139 7.8a.05.05 0 0 1-.026-.037V4.049c0-.57.166-1.127.476-1.607s.752-.864 1.275-1.105a3.08 3.08 0 0 1 3.234.41l-.096.054-3.23 1.838a.53.53 0 0 0-.265.455zm.742-1.577 1.758-1 1.762 1v2l-1.755 1-1.762-1z"/>
+        </svg>Developed by PEE-MOR-TAE
+    </div>
+</div>
+
+<script>
+// --- การจัดการ Theme ---
+document.addEventListener("DOMContentLoaded", () => {
+    const themeSwitcherBtn = document.getElementById('themeSwitcherBtn');
+    const themeDropdown = document.getElementById('themeDropdown');
+    const themeItems = document.querySelectorAll('.theme-item[data-theme]');
+    const customThemeBtn = document.getElementById('customThemeBtn');
+    const customThemeModal = document.getElementById('customThemeModal');
+    const applyCustomBtn = document.getElementById('applyCustom');
+    const cancelCustomBtn = document.getElementById('cancelCustom');
+    const colorStartInput = document.getElementById('colorStart');
+    const colorEndInput = document.getElementById('colorEnd');
+    const body = document.body;
+
+    // ฟังก์ชันสำหรับใช้ธีม
+    function applyTheme(themeName, colorStart = null, colorEnd = null) {
+        body.className = themeName;
+        if (themeName === 'theme-custom' && colorStart && colorEnd) {
+            body.style.setProperty('--custom-primary-start', colorStart);
+            body.style.setProperty('--custom-primary-end', colorEnd);
+        }
+        localStorage.setItem('selectedTheme', themeName);
+        if (themeName === 'theme-custom') {
+            localStorage.setItem('customColorStart', colorStart);
+            localStorage.setItem('customColorEnd', colorEnd);
+        }
+    }
+
+    // โหลดธีมที่บันทึกไว้เมื่อเข้าหน้าเว็บ
+    const savedTheme = localStorage.getItem('selectedTheme');
+    if (savedTheme) {
+        if (savedTheme === 'theme-custom') {
+            const savedColorStart = localStorage.getItem('customColorStart');
+            const savedColorEnd = localStorage.getItem('customColorEnd');
+            if (savedColorStart && savedColorEnd) {
+                applyTheme(savedTheme, savedColorStart, savedColorEnd);
+                colorStartInput.value = savedColorStart;
+                colorEndInput.value = savedColorEnd;
+            } else {
+                applyTheme('theme-default');
+            }
+        } else {
+            applyTheme(savedTheme);
+        }
+    }
+
+    // เปิด/ปิด dropdown
+    themeSwitcherBtn.addEventListener('click', () => {
+        themeDropdown.classList.toggle('open');
+    });
+
+    // เลือกธีมจาก dropdown
+    themeItems.forEach(item => {
+        item.addEventListener('click', () => {
+            const theme = item.getAttribute('data-theme');
+            applyTheme(theme);
+            themeDropdown.classList.remove('open');
+        });
+    });
+
+    // เปิด modal สำหรับ Custom Theme
+    customThemeBtn.addEventListener('click', () => {
+        themeDropdown.classList.remove('open');
+        customThemeModal.classList.add('open');
+    });
+
+    // ใช้ธีมที่กำหนดเอง
+    applyCustomBtn.addEventListener('click', () => {
+        const colorStart = colorStartInput.value;
+        const colorEnd = colorEndInput.value;
+        applyTheme('theme-custom', colorStart, colorEnd);
+        customThemeModal.classList.remove('open');
+    });
+
+    // ปิด modal
+    cancelCustomBtn.addEventListener('click', () => {
+        customThemeModal.classList.remove('open');
+    });
+
+    // ปิด dropdown เมื่อคลิกที่อื่น
+    window.addEventListener('click', (e) => {
+        if (!themeSwitcherBtn.contains(e.target) && !themeDropdown.contains(e.target) && !customThemeModal.contains(e.target)) {
+            themeDropdown.classList.remove('open');
+            customThemeModal.classList.remove('open');
+        }
+    });
+
+});
+
+// --- Tab switching ---
+const tabs = document.querySelectorAll('.tab');
+const contents = document.querySelectorAll('.tab-content');
+const indicator = document.querySelector('.tab-indicator');
+
+tabs.forEach(tab => {
+    tab.addEventListener('click', () => {
+        tabs.forEach(t => t.classList.remove('active'));
+        tab.classList.add('active');
+        const target = tab.getAttribute('data-tab');
+        contents.forEach(c => c.id === target ? c.classList.add('active') : c.classList.remove('active'));
+        
+        // Move indicator
+        if (target === 'admin') {
+            indicator.style.transform = 'translateX(100%)';
+            indicator.style.backgroundColor = 'var(--admin-color)';
+        } else {
+            indicator.style.transform = 'translateX(0)';
+            indicator.style.backgroundColor = 'var(--primary-color-start)';
+        }
+    });
+});
+
+// ===== ฟังก์ชันแสดงสถานะ Loading =====
+function setLoading(button, isLoading, text = "Login") {
+    if (isLoading) {
+        button.disabled = true;
+        button.dataset.originalText = button.textContent;
+        button.textContent = "⏳ กำลังทำงาน...";
+    } else {
+        button.disabled = false;
+        button.textContent = button.dataset.originalText || text;
+    }
+}
+
+// --- User Tab LINE Login ---
+const userBtn = document.getElementById('lineLoginUser');
+userBtn.addEventListener('click', async () => {
+    setLoading(userBtn, true, "Login with LINE");
+
+    try {
+        await liff.init({ liffId: "2007956727-rbZz9a0z" });
+        if (!liff.isLoggedIn()) { liff.login(); return; }
+
+        const profile = await liff.getProfile();
+        const lineUserId = profile.userId;
+
+        const response = await fetch(`https://script.google.com/macros/s/AKfycbwSxcMHSXrDnhvE8XeL4PElr_3P2fCj27_hkXRgBqh8npe0emiLUuubiUWBPezeLrp6_g/exec`, {
+            method: "POST",
+            headers: { "Content-Type": "application/x-www-form-urlencoded" },
+            body: `lineUserId=${encodeURIComponent(lineUserId)}`
+        });
+        const result = await response.json();
+
+        if (result.result === "success") {
+            window.location.href = "Dashboard.html";
+        } else {
+            sessionStorage.setItem('lineUserId', lineUserId);
+            window.location.href = "register.html";
+        }
+
+    } catch(e) {
+        console.error(e);
+        alert("เกิดข้อผิดพลาด LINE Login");
+    } finally {
+        setLoading(userBtn, false, "Login with LINE");
+    }
+});
+
+// --- Admin Tab Username/Password Login ---
+const adminBtn = document.getElementById('adminLoginBtn');
+adminBtn.addEventListener('click', () => {
+    setLoading(adminBtn, true, "Login");
+    const username = document.getElementById('adminUsername').value;
+    const password = document.getElementById('adminPassword').value;
+    setTimeout(() => { // จำลอง delay
+        if(username === "adminbus" && password === "abc@12345"){
+            window.location.href = "Addmin.html";
+        } else {
+            alert("รหัสหรือผู้ใช้ไม่ถูกต้อง");
+        }
+        setLoading(adminBtn, false, "Login");
+    }, 500);
+});
+
+// ปุ่ม LINE ของ Admin Tab
+const adminLineBtn = document.getElementById('lineLoginAdmin');
+adminLineBtn.addEventListener('click', async () => {
+  setLoading(adminLineBtn, true, "Login with LINE");
+
+  try {
+    await liff.init({ liffId: "2007956727-rbZz9a0z" });
+    if (!liff.isLoggedIn()) { liff.login(); return; }
+
+    const profile = await liff.getProfile();
+    const lineUserId = profile.userId;
+    console.log("LINE User ID:", lineUserId);
+
+    const response = await fetch(
+      `https://script.google.com/macros/s/AKfycbwZdaR0GvIhfCTJBAlOFg7JjmPos84fZCcFGRmGG2iwsOfbzFsDooNn0eX_JU6w6P4vYQ/exec?lineUserId=${encodeURIComponent(lineUserId)}`
+    );
+    const result = await response.json();
+    console.log("ผลลัพธ์จาก Apps Script:", result);
+
+    if (result.result === "success") {
+      // ✅ เก็บชื่อไว้ใน sessionStorage
+      sessionStorage.setItem("adminName", result.name || "");
+
+      // ไปหน้า Admin
+      window.location.href = "Admin.html";
+    } else {
+      // ไม่พบ -> เก็บ LineUserID ไปหน้า register
+      sessionStorage.setItem('lineUserId', lineUserId);
+      window.location.href = "register-admin.html";
+    }
+
+  } catch (e) {
+    console.error("เกิดข้อผิดพลาด:", e);
+    alert("เกิดข้อผิดพลาดในระบบ LINE Login (Admin)");
+  } finally {
+    setLoading(adminLineBtn, false, "Login with LINE");
+  }
+});
+
+
+</script>
+
+</body>
+</html>
